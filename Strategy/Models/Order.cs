@@ -1,4 +1,6 @@
-﻿using Strategy.Strategies.SalesTax;
+﻿using Strategy.Strategies.Invoice;
+using Strategy.Strategies.SalesTax;
+using Strategy.Strategies.ShippingProviders;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +11,12 @@ namespace Strategy.Models
     {
         // New sales tax strategy interface
         public ISalesTaxStrategy SalesTaxStrategy { get; set; }
+
+        // New invoice strategy interface
+        public IInvoiceStrategy InvoiceStrategy { get; set; }
+
+        // New shipping strategy interface
+        public IShippingProviderStrategy ShippingProviderStrategy { get; set; }
 
         public Dictionary<Item, int> LineItems { get; } = new Dictionary<Item, int>();
 
@@ -24,12 +32,28 @@ namespace Strategy.Models
 
         public ShippingDetails ShippingDetails { get; set; }
 
-        public decimal GetTax()
+        public decimal GetTax(ISalesTaxStrategy salesTaxStrategy = default)
         {
-            if (SalesTaxStrategy == null)
-                throw new NullReferenceException("Sales tax strategy object not set");
+            var taxStrategy = salesTaxStrategy ?? SalesTaxStrategy;
 
-            return SalesTaxStrategy.GetTaxFor(this);
+            return taxStrategy.GetTaxFor(this);
+        }
+
+        public void FinaliseOrder()
+        {
+            if (SelectedPayments.Any(x => x.PaymentProvider == PaymentProvider.Invoice) &&
+                                     AmountDue > 0 &&
+                                     ShippingStatus == ShippingStatus.WaitingForPayment)
+            {
+                InvoiceStrategy.Generate(this);
+                ShippingStatus = ShippingStatus.ReadyForShippment;
+            }
+            else if (AmountDue > 0)
+            {
+                throw new Exception("Unable to finalise order");
+            }
+
+            ShippingProviderStrategy.Ship(this);
         }
     }
 }
