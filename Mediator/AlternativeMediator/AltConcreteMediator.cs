@@ -17,6 +17,16 @@ namespace MediatorPattern.ClassicMediator
             colleague.SetMediator(this);
             colleagues.Add(colleague);
         }
+
+        // Include the colleague creation and registration together. Use generics
+        public T CreateColleague<T>() where T : AlternativeColleague, new()
+        {
+            var colleague = new T();
+            colleague.SetMediator(this);
+            colleagues.Add(colleague);
+            return colleague;
+        }
+
         public override void Send(string message, AlternativeColleague colleague)
         {
             if (colleague == null)
