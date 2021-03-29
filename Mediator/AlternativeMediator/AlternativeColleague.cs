@@ -4,9 +4,9 @@ namespace MediatorPattern.ClassicMediator
 {
     public abstract class AlternativeColleague
     {
-        protected AlternativeMediator mediator;
+        protected Chatroom mediator;
 
-        internal void SetMediator(AlternativeMediator mediator)
+        internal void SetMediator(Chatroom mediator)
         {
             this.mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }

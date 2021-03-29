@@ -6,7 +6,7 @@ namespace MediatorPattern.ClassicMediator
     {
         public override void HandleNotification(string message)
         {
-            Console.WriteLine($"Colleague 4 received notification a message: {message}");
+            Console.WriteLine($"Colleague 4 received notification message: {message}");
         }
     }
 }

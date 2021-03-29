@@ -4,12 +4,12 @@ using System.Linq;
 
 namespace MediatorPattern.ClassicMediator
 {
-    public class AltConcreteMediator : AlternativeMediator
+    public class AltConcreteMediator : Chatroom
     {
 
         private IList<AlternativeColleague> colleagues = new List<AlternativeColleague>();
 
-        public void Register (AlternativeColleague colleague)
+        public override void Register (AlternativeColleague colleague)
         {
             if (colleague == null)
                 throw new ArgumentNullException(nameof(colleague));
